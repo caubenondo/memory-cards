@@ -177,6 +177,8 @@ function restartGame() {
     // show deck and hide winning board
     swapClass('hide', 'container');
     swapClass('win', 'hide container');
+    // reset stars
+    swapClass('fa-star-o', 'fa fa-star')
 }
 document.querySelector('.restart').addEventListener('click', function () {
     let restart = confirm('Are you sure you want to restart?');
