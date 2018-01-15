@@ -139,10 +139,7 @@ function showCard(card, indexOfCurrentCard) {
             notMatched();
             openCard = [];
         }
-
     }
-
-
 }
 
 // select all elemnt that has specific class and then replace it with a define classList
@@ -169,13 +166,14 @@ function notMatched() {
             swapClass('error', 'card');
         }, 400);
     }, 400);
-    movesHandler();
+    
     openCard = [];
 }
 
 function matchCheck(array) {
     if (array[0].className != array[1].className) {
         notMatched();
+        movesHandler();
     } else {
         matched();
         matchCount++;
