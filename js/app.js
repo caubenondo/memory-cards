@@ -129,7 +129,7 @@ function showCard(card, indexOfCurrentCard) {
     openCard.push(currentCard);
 
     // call timerDisplay on when the first card is fliped
-    if (openCard.length == 1 && movesCount == 0) {
+    if (openCard.length == 1 && movesCount == 0 && document.querySelector('#timer span').innerText =='00:00:00') {
         timerDisplay();
     } else if (openCard.length == 2) {
         if ((openCard[0].index != openCard[1].index)) {
