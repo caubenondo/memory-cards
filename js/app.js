@@ -75,9 +75,13 @@ deck.addEventListener('click', function (e) {
 
     let target = e.target;
     if (target.tagName == 'LI') {
-        showCard(target);
+        //get index of target
+        let indexOfCurrentCard=[...target.parentNode.children].indexOf(target);
+        showCard(target,indexOfCurrentCard);
     } else if (target.tagName == 'I') {
-        showCard(target.parentElement);
+        target = target.parentElement;
+         let indexOfCurrentCard = [...target.parentNode.children].indexOf(target);
+        showCard(target, indexOfCurrentCard);
     }
 
 });
@@ -105,14 +109,25 @@ function movesHandler() {
 }
 
 // show cards to the table
-function showCard(card) {
+function showCard(card, indexOfCurrentCard) {
+    // reveal the individual card
     card.classList.add('show', 'open');
+    // target icon element
     let icon = card.querySelector('i');
-    openCard.push(icon.className);
+
+    // store current card info into object and then push to openCard array
+    let currentCard ={className:icon.className, index:indexOfCurrentCard};
+    openCard.push(currentCard);
+    
     if (openCard.length == 2) {
-        matchCheck(openCard);
-        openCard = [];
-    }
+        if ( (openCard[0].index != openCard[1].index)) {
+             matchCheck(openCard);
+             openCard = [];
+        }else{
+            notMatched();
+            openCard=[];
+        }
+    } 
 }
 
 // select all elemnt that has specific class and then replace it with a define classList
@@ -129,16 +144,20 @@ function matched() {
     for (const key in elements) {
         elements[key].className = "card match";
     }
+    openCard = [];
 }
-
+function notMatched() {
+      setTimeout(function () {
+          swapClass('open', 'card error show');
+          setTimeout(() => {
+              swapClass('error', 'card');
+          }, 400);
+      }, 400);
+      openCard = [];
+}
 function matchCheck(array) {
-    if (array[0] != array[1]) {
-        setTimeout(function () {
-            swapClass('open', 'card error show');
-            setTimeout(() => {
-                swapClass('error', 'card');
-            }, 400);
-        }, 400);
+    if (array[0].className != array[1].className) {
+        notMatched();
     } else {
         matched();
         matchCount++;
