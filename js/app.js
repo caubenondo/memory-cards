@@ -74,14 +74,22 @@ deck.addEventListener('click', function (e) {
     movesHandler();
 
     let target = e.target;
+
+    // in case player click on the icon (child element of card) than the card
     if (target.tagName == 'LI') {
-        //get index of target
-        let indexOfCurrentCard=[...target.parentNode.children].indexOf(target);
-        showCard(target,indexOfCurrentCard);
+        // prevent player click again on matched card
+        // show card if the card is not matched
+        if (!target.classList.contains('match')) {
+            let indexOfCurrentCard = [...target.parentNode.children].indexOf(target);
+            showCard(target, indexOfCurrentCard);
+        }
+        
     } else if (target.tagName == 'I') {
         target = target.parentElement;
-         let indexOfCurrentCard = [...target.parentNode.children].indexOf(target);
-        showCard(target, indexOfCurrentCard);
+        if (!target.classList.contains('match')) {
+            let indexOfCurrentCard = [...target.parentNode.children].indexOf(target);
+            showCard(target, indexOfCurrentCard);
+        }
     }
 
 });
