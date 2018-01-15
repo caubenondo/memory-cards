@@ -71,7 +71,7 @@ function shuffle(array) {
 // Flip the card
 deck.addEventListener('click', function (e) {
     e.preventDefault();
-    movesHandler();
+ 
 
     let target = e.target;
 
@@ -83,7 +83,7 @@ deck.addEventListener('click', function (e) {
             let indexOfCurrentCard = [...target.parentNode.children].indexOf(target);
             showCard(target, indexOfCurrentCard);
         }
-        
+
     } else if (target.tagName == 'I') {
         target = target.parentElement;
         if (!target.classList.contains('match')) {
@@ -107,10 +107,6 @@ function movesHandler() {
             stars[1].classList.replace('fa-star', 'fa-star-o');
             starsCount--;
             break;
-        case 36:
-            stars[0].classList.replace('fa-star', 'fa-star-o');
-            starsCount--;
-            break;
         default:
             break;
     }
@@ -124,18 +120,22 @@ function showCard(card, indexOfCurrentCard) {
     let icon = card.querySelector('i');
 
     // store current card info into object and then push to openCard array
-    let currentCard ={className:icon.className, index:indexOfCurrentCard};
+    let currentCard = {
+        className: icon.className,
+        index: indexOfCurrentCard
+    };
     openCard.push(currentCard);
-    
+
     if (openCard.length == 2) {
-        if ( (openCard[0].index != openCard[1].index)) {
-             matchCheck(openCard);
-             openCard = [];
-        }else{
+        if ((openCard[0].index != openCard[1].index)) {
+            matchCheck(openCard);
+            openCard = [];
+        } else {
             notMatched();
-            openCard=[];
+            openCard = [];
         }
-    } 
+        movesHandler();
+    }
 }
 
 // select all elemnt that has specific class and then replace it with a define classList
@@ -154,15 +154,18 @@ function matched() {
     }
     openCard = [];
 }
+
 function notMatched() {
-      setTimeout(function () {
-          swapClass('open', 'card error show');
-          setTimeout(() => {
-              swapClass('error', 'card');
-          }, 400);
-      }, 400);
-      openCard = [];
+    setTimeout(function () {
+        swapClass('open', 'card error show');
+        setTimeout(() => {
+            swapClass('error', 'card');
+        }, 400);
+    }, 400);
+    
+    openCard = [];
 }
+
 function matchCheck(array) {
     if (array[0].className != array[1].className) {
         notMatched();
