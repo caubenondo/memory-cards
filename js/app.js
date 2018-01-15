@@ -17,7 +17,7 @@ let movesCount = 0;
 let moves = document.querySelector('.moves');
 let matchCount = 0;
 let starsCount = 3;
-
+let timer;
 // selecting the deck
 let deck = document.querySelector('.deck');
 
@@ -71,7 +71,7 @@ function shuffle(array) {
 // Flip the card
 deck.addEventListener('click', function (e) {
     e.preventDefault();
- 
+
 
     let target = e.target;
 
@@ -99,11 +99,12 @@ function movesHandler() {
     moves.innerText = String(movesCount);
     let stars = document.querySelectorAll('.fa-star');
     switch (movesCount) {
-        case 16:
+        case 5:
+            // decrease 1 star if there is more than 5 unmatched moves
             stars[2].classList.replace('fa-star', 'fa-star-o');
             starsCount--;
             break;
-        case 26:
+        case 10:
             stars[1].classList.replace('fa-star', 'fa-star-o');
             starsCount--;
             break;
@@ -114,6 +115,7 @@ function movesHandler() {
 
 // show cards to the table
 function showCard(card, indexOfCurrentCard) {
+
     // reveal the individual card
     card.classList.add('show', 'open');
     // target icon element
@@ -126,7 +128,10 @@ function showCard(card, indexOfCurrentCard) {
     };
     openCard.push(currentCard);
 
-    if (openCard.length == 2) {
+    // call timerDisplay on when the first card is fliped
+    if (openCard.length == 1 && movesCount == 0) {
+        timerDisplay();
+    } else if (openCard.length == 2) {
         if ((openCard[0].index != openCard[1].index)) {
             matchCheck(openCard);
             openCard = [];
@@ -134,8 +139,10 @@ function showCard(card, indexOfCurrentCard) {
             notMatched();
             openCard = [];
         }
-        movesHandler();
+
     }
+
+
 }
 
 // select all elemnt that has specific class and then replace it with a define classList
@@ -162,7 +169,7 @@ function notMatched() {
             swapClass('error', 'card');
         }, 400);
     }, 400);
-    
+    movesHandler();
     openCard = [];
 }
 
@@ -185,10 +192,41 @@ function matchCheck(array) {
 function finalMessage() {
     let container = document.querySelector('.container');
     container.classList.add('hide');
+    // get timer display and split into chars 
+    const timeFinish = document.querySelector('#timer span').innerText.split('');
+    let hrs, mins, secs;
+    // format timer units string
+    if (timeFinish[0] == 0 && timeFinish[1] <= 1) {
+        hrs = timeFinish[1] + ' hour ';
+    } else if (timeFinish[0] == 0) {
+        hrs = timeFinish[1] + ' hours ';
+    } else {
+        hrs = timeFinish[0] + timeFinish[1] + ' hours ';
+    }
+
+    if (timeFinish[3] == 0 && timeFinish[4] <= 1) {
+        mins = timeFinish[4] + ' min ';
+    } else if (timeFinish[3] == 0) {
+        mins = timeFinish[4] + ' mins ';
+    } else {
+        mins = timeFinish[3] + timeFinish[4] + ' mins ';
+    }
+
+    if (timeFinish[6] == 0 && timeFinish[7] <= 1) {
+        secs = timeFinish[7] + ' second ';
+    } else if (timeFinish[6] == 0) {
+        secs = timeFinish[7] + ' seconds ';
+    } else {
+        secs = timeFinish[6] + timeFinish[7] + ' seconds ';
+    }
+
     let msgTemplate = `<div class="container win"> 
-                            <header><h1> Congratulation! You Won! </h1></header>
-                       <p> With ${movesCount} Moves and ${starsCount} Stars.</p> 
-                        <button onclick="restartGame()">Play Again</button>
+                        <header>
+                            <h1> Congratulation! You Won! </h1>
+                            <h2> you finished in ${hrs + mins + secs} <h2> 
+                            <h3> With ${movesCount} Moves and ${starsCount} Stars.</h3>                   
+                            <button onclick="restartGame()">Play Again</button>
+                        </header>
                     </div>
                        `;
     container.parentElement.appendChild(document.createElement('div')).innerHTML = msgTemplate;
@@ -197,11 +235,14 @@ function finalMessage() {
 
 // restart
 function restartGame() {
+    clearInterval(timer);
+    document.querySelector('#timer span').innerText = '00:00:00';
     movesCount = 0;
     matchCount = 0;
     moves.innerText = 0;
     starsCount = 3;
     deck.innerHTML = "";
+    openCard = [];
     createLayout();
 
     // show deck and hide winning board
@@ -210,7 +251,11 @@ function restartGame() {
     // reset stars
     swapClass('fa-star-o', 'fa fa-star');
     // remove the win container div when player hit restart
-    document.querySelector('.hide.container').remove();
+    if (document.querySelector('.container').classList.contains('hide')) {
+        document.querySelector('.hide.container').remove();
+    }
+
+
 }
 document.querySelector('.restart').addEventListener('click', function () {
     let restart = confirm('Are you sure you want to restart?');
@@ -218,3 +263,27 @@ document.querySelector('.restart').addEventListener('click', function () {
         restartGame();
     }
 });
+
+
+// Timer for player
+function timerDisplay() {
+    const gameStart = new Date().getTime();
+    timer = setInterval(function () {
+        let currentTime = new Date().getTime();
+        let currentTimePlay = currentTime - gameStart;
+        let hrs = Math.floor((currentTimePlay % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let mins = Math.floor((currentTimePlay % (1000 * 60 * 60)) / (1000 * 60));
+        let secs = Math.floor((currentTimePlay % (1000 * 60)) / (1000));
+        //formating the second value
+        if (secs < 10) {
+            secs = '0' + secs;
+        }
+        if (mins < 10) {
+            mins = '0' + mins;
+        }
+        if (hrs < 10) {
+            hrs = '0' + hrs;
+        }
+        document.querySelector('#timer span').innerText = hrs + ':' + mins + ":" + secs;
+    }, 500);
+}
