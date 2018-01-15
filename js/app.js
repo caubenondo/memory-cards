@@ -175,10 +175,12 @@ function restartGame() {
     createLayout();
 
     // show deck and hide winning board
-    swapClass('hide', 'container');
-    swapClass('win', 'hide container');
+    swapClass('hide.container', 'container');
+    swapClass('win.container', 'hide container');
     // reset stars
-    swapClass('fa-star-o', 'fa fa-star')
+    swapClass('fa-star-o', 'fa fa-star');
+    // remove the win container div when player hit restart
+    document.querySelector('.hide.container').remove();
 }
 document.querySelector('.restart').addEventListener('click', function () {
     let restart = confirm('Are you sure you want to restart?');
