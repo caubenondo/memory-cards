@@ -1,9 +1,15 @@
 /*
  * Create a list that holds all of your cards
  */
-let cardIconsList = ['fa-camera', 'fa-bug', 'fa-bomb', 'fa-bolt', 'fa-diamond', 'fa-bell', 'fa-anchor', 'fa-area-chart'];
-// double itself
-cardIconsList = cardIconsList.concat(cardIconsList);
+const iconLib = ['fa-camera', 'fa-bug', 'fa-bomb', 'fa-bolt', 'fa-diamond', 'fa-bell', 'fa-anchor', 'fa-area-chart',
+                'fa-reddit', 'fa-eye', 'fa-cube', 'fa-female', 'fa-envelope', 'fa-comment', 'fa-coffee','fa-low-vision','fa-map-marker','fa-map','fa-sign-language',
+                'fa-tag','fa-thumbs-up', 'fa-star', 'fa-star-half-full','fa-trophy','fa-male','fa-car', 'fa-truck','fa-rocket','fa-bitcoin','fa-chain','fa-arrows','fa-arrows-alt'
+
+];
+shuffle(iconLib);
+
+let cardIconsList = [];
+
 
 /*
  * Display the cards on the page
@@ -34,6 +40,7 @@ function createLayout() {
         deck.appendChild(node);
     }
 }
+gameScale(8);
 createLayout();
 
 
@@ -177,7 +184,7 @@ function matchCheck(array) {
     } else {
         matched();
         matchCount++;
-        if (matchCount == 8) {
+        if (matchCount == cardIconsList.length/2) {
             setTimeout(() => {
                 finalMessage();
             }, 200);
@@ -217,17 +224,20 @@ function finalMessage() {
     } else {
         secs = timeFinish[6] + timeFinish[7] + ' seconds ';
     }
+    const difficult = document.querySelector('input[name="difficult"]:checked').value;
 
     let msgTemplate = `<div class="container win"> 
-                        <header>
-                            <h1> Congratulation! You Won! </h1>
-                            <h2> you finished in ${hrs + mins + secs} <h2> 
-                            <h3> With ${movesCount} Moves and ${starsCount} Stars.</h3>                   
-                            <button onclick="restartGame()">Play Again</button>
-                        </header>
+                   
+                            <h1> Congratulations! You won! </h1>
+                     
+                            <h2> You finished ${difficult.toUpperCase()} game in ${hrs + mins + secs} </h2> 
+                            <h3> With ${movesCount} Moves and ${starsCount} Stars.</h3>
+                            
+                            <button onclick="restartGameAfterWin()">Play Again</button>
+                            
                     </div>
                        `;
-    container.parentElement.appendChild(document.createElement('div')).innerHTML = msgTemplate;
+    container.parentElement.appendChild(document.createElement('section')).innerHTML = msgTemplate;
 
 }
 
@@ -244,21 +254,25 @@ function restartGame() {
     createLayout();
 
     // show deck and hide winning board
-    swapClass('hide.container', 'container');
-    swapClass('win.container', 'hide container');
+    swapClass('hide', 'container');
+    swapClass('win', 'hide');
     // reset stars
     swapClass('fa-star-o', 'fa fa-star');
     // remove the win container div when player hit restart
-    if (document.querySelector('.container').classList.contains('hide')) {
-        document.querySelector('.hide.container').remove();
+    if (document.querySelectorAll('section')[1]!=null) {
+        document.querySelectorAll('section')[1].remove();
     }
 
-
+}
+function restartGameAfterWin() {
+    restartGame();
+    layoutWithDifficult();
+    
 }
 document.querySelector('.restart').addEventListener('click', function () {
     let restart = confirm('Are you sure you want to restart?');
     if (restart == true) {
-        restartGame();
+        restartGameAfterWin();
     }
 });
 
@@ -284,4 +298,50 @@ function timerDisplay() {
         }
         document.querySelector('#timer span').innerText = hrs + ':' + mins + ":" + secs;
     }, 500);
+}
+
+
+// listen to difficulty change
+document.querySelector('#difficult').addEventListener('submit', function (event) {
+    event.preventDefault();
+    layoutWithDifficult();
+
+});
+
+function layoutWithDifficult() {
+    const difficult = document.querySelector('input[name="difficult"]:checked').value;
+
+    switch (difficult) {
+        case 'hard':
+            gameScale(18);
+            restartGame();
+            changeCSS(document.querySelectorAll('.card'), 'width:95px; height:95px;');
+            changeCSS(document.querySelectorAll('.deck'), 'margin: 0 0 2em;');
+            break;
+        case 'insane':
+            gameScale(32);
+            restartGame();
+            changeCSS(document.querySelectorAll('.card'), 'width:70px; height:70px;');
+            changeCSS(document.querySelectorAll('.deck'), 'margin: 0 0 1em;');
+            break;
+        default:
+            gameScale(8);
+            restartGame();
+            changeCSS(document.querySelectorAll('.card'), 'width:125px; height:125px;');
+            changeCSS(document.querySelectorAll('.deck'), 'margin: 0 0 3em;');
+            break;
+    }
+}
+function gameScale(number) {
+    cardIconsList = [];
+    for (let i = 0; i < number; i++) {
+        cardIconsList.push(iconLib[i]);
+    }
+    cardIconsList = cardIconsList.concat(cardIconsList);
+}
+
+function changeCSS(thisArray, cssText) {
+    for (let i = 0; i < thisArray.length; i++) {
+        thisArray[i].setAttribute('style', cssText);
+    }
 }
