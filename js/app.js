@@ -2,8 +2,8 @@
  * Create a list that holds all of your cards
  */
 const iconLib = ['fa-camera', 'fa-bug', 'fa-bomb', 'fa-bolt', 'fa-diamond', 'fa-bell', 'fa-anchor', 'fa-area-chart',
-                'fa-reddit', 'fa-eye', 'fa-cube', 'fa-female', 'fa-envelope', 'fa-comment', 'fa-coffee','fa-low-vision','fa-map-marker','fa-map','fa-sign-language',
-                'fa-tag','fa-thumbs-up', 'fa-star', 'fa-star-half-full','fa-trophy','fa-male','fa-car', 'fa-truck','fa-rocket','fa-bitcoin','fa-chain','fa-arrows','fa-arrows-alt'
+    'fa-reddit', 'fa-eye', 'fa-cube', 'fa-female', 'fa-envelope', 'fa-comment', 'fa-coffee', 'fa-low-vision', 'fa-map-marker', 'fa-map', 'fa-sign-language',
+    'fa-tag', 'fa-thumbs-up', 'fa-star', 'fa-star-half-full', 'fa-trophy', 'fa-male', 'fa-car', 'fa-truck', 'fa-rocket', 'fa-bitcoin', 'fa-chain', 'fa-arrows', 'fa-arrows-alt'
 
 ];
 shuffle(iconLib);
@@ -136,7 +136,7 @@ function showCard(card, indexOfCurrentCard) {
     openCard.push(currentCard);
 
     // call timerDisplay on when the first card is fliped
-    if (openCard.length == 1 && movesCount == 0 && document.querySelector('#timer span').innerText =='00:00:00') {
+    if (openCard.length == 1 && movesCount == 0 && document.querySelector('#timer span').innerText == '00:00:00') {
         timerDisplay();
     } else if (openCard.length == 2) {
         if ((openCard[0].index != openCard[1].index)) {
@@ -173,7 +173,7 @@ function notMatched() {
             swapClass('error', 'card');
         }, 400);
     }, 400);
-    
+
     openCard = [];
 }
 
@@ -184,7 +184,7 @@ function matchCheck(array) {
     } else {
         matched();
         matchCount++;
-        if (matchCount == cardIconsList.length/2) {
+        if (matchCount == cardIconsList.length / 2) {
             setTimeout(() => {
                 finalMessage();
             }, 200);
@@ -259,15 +259,16 @@ function restartGame() {
     // reset stars
     swapClass('fa-star-o', 'fa fa-star');
     // remove the win container div when player hit restart
-    if (document.querySelectorAll('section')[1]!=null) {
+    if (document.querySelectorAll('section')[1] != null) {
         document.querySelectorAll('section')[1].remove();
     }
 
 }
+
 function restartGameAfterWin() {
     restartGame();
     layoutWithDifficult();
-    
+
 }
 document.querySelector('.restart').addEventListener('click', function () {
     let restart = confirm('Are you sure you want to restart?');
@@ -332,6 +333,7 @@ function layoutWithDifficult() {
             break;
     }
 }
+
 function gameScale(number) {
     cardIconsList = [];
     for (let i = 0; i < number; i++) {
